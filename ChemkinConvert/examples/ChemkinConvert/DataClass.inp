@@ -1,0 +1,28 @@
+ObjectClasses:
+DataType: MoleculeSummarySet The set of standard molecule summaries
+StandardMoleculeSummary  MoleculeSummary
+END
+ClassNamePairs:
+RootName               String
+MoleculeClass          String
+ReactionClass          String
+MechanismClass         String
+ChemkinClass           String 
+ThermoNameInInstance   String
+ChemkinNameInInstance  String
+LiteratureReference    String
+MoleculeSummaryName    String
+FileRoot               String
+ReactionRate             String
+ThirdBody                String
+ReactionRateHiLow        String
+%%%-------------------------
+%%%ChemkinName            String
+%%%MoleculeChemkin        String
+RefGenerated    LiteratureReference
+StandardMoleculeSummary StandardMoleculeSummary
+END
+ObjectClasses:
+END
+ClassNamePairs:
+END

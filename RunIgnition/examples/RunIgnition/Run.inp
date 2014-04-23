@@ -1,0 +1,87 @@
+InstanceSet  =====================A Set of Instances==========================
+Attributes:
+%%%%-----------------------------------------------------------------------------
+%%%%   ReadInstancesAlg    AlgorithmSummary
+       Initial MechanismRoutines  END    % Algorithm Category
+       END                     % Algorithm KeyWords
+       Read END                               % Algorithm Specification
+                                              % Algorithm Input Parameters
+                               % (Name-Class Pairs)
+MoleculeClass          String
+ReactionClass          String
+MechanismClass         String
+ChemkinClass            String
+ThermoNameInInstance   String
+ChemkinNameInInstance  String
+LiteratureReference    String
+MoleculeSummaryName    String
+FileRoot               String
+ReactionRate            String
+ThirdBody               String
+ReactionRateHiLow       String
+       END
+                                              % Algorithm Result Parameters
+       END
+%%%%-----------------------------------------------------------------------------
+%%%%   RunIgnitionAlg    AlgorithmSummary
+%%%%-----------------------------------------------------------------------------
+       Initial MechanismRoutines  END    % Algorithm Category
+       ShowTimeSteps 
+       Excel
+       MolFractions
+       ForwardRates
+       ReverseRates
+       NetProductionRates
+       TimeStepProperties
+       END                     % Algorithm KeyWords
+       Run END                               % Algorithm Specification
+                                              % Algorithm Input Parameters
+                               % (Name-Class Pairs)
+       FileRoot             String   
+       Conditions           Real
+       FinalTime            Real
+       OutputName           String
+       END
+                                              % Algorithm Result Parameters
+       END
+%%%%-----------------------------------------------------------------------------
+%%%%   RunSetOfConditionsAlg    AlgorithmSummary
+%%%%-----------------------------------------------------------------------------
+       Initial SetOfRuns  END    % Algorithm Category
+       ShowTimeSteps 
+%%%       FileSummary
+       ExtraOutput
+       Excel
+       MolFractions
+       ForwardRates
+       ReverseRates
+       NetProductionRates
+       TimeStepProperties
+       END                     % Algorithm KeyWords
+       RunSet Ignition END     % Algorithm Specification
+                                              % Algorithm Input Parameters
+                               % (Name-Class Pairs)
+       FileRoot             String   
+       Conditions           Real
+       FinalTime            Real
+       OutputName           String
+       IterationSet         IterationSet
+       END
+                                              % Algorithm Result Parameters
+       END
+%% -------------------------------------------------
+%%                     AlgorithmSummary
+%% -------------------------------------------------
+                                    % The name of the Algorithm
+Initial MechanismRoutines  END      % The Algorithm Category
+Standard ChemkinName END              % The Algorithm Keywords
+Print  END                          % Algorithm Specification
+                                    % Algorithm Input Parameters
+PrintParameters   KeyWords
+SubMolecules      KeyWords
+END
+                                    % Algorithm Output Parameters
+END
+%%%%-----------------------------------------------------------------------------
+%%%-----------------------------------------------------------------------
+END

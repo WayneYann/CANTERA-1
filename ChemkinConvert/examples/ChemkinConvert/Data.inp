@@ -1,0 +1,24 @@
+SetOfData ================= Read Test ==========================
+Attributes:
+ChemkinFile
+StandardMolecule
+StandardReaction
+StandardMechanism
+StandardChemkin
+Chemkin
+ChemkinName
+RefGenerated
+StandardMoleculeSummary
+ChemkinFile
+CalorieReactionRates
+StandardThirdBody
+StandardReactionRateHiLow
+% -----------------------------------------
+%  Ref     RxnDataLiteratureReference
+% -----------------------------------------
+Generated ; Edward S. Blurock ; from react
+% -----------------------------------------
+% StandardMoleculeSummary StandardMoleculeSummary
+% -----------------------------------------
+END
+END

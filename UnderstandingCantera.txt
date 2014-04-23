@@ -1,0 +1,187 @@
+    void GasKinetics::
+    getRevRateConstants(doublereal *krev, bool doIrreversible) {
+	/*
+	 * go get the forward rate constants. -> note, we don't
+	 * really care about speed or redundancy in these
+	 * informational routines.
+	 */
+        getFwdRateConstants(krev);
+
+	if (doIrreversible) {
+	  doublereal *tmpKc = m_kdata->m_ropnet.begin();
+	  getEquilibriumConstants(tmpKc);
+	  for (int i = 0; i < m_ii; i++) {
+	    krev[i] /=  tmpKc[i];
+	  }
+	} else {
+	  /*
+	   * m_rkc[] is zero for irreversibly reactions
+	   */
+	  const vector_fp& m_rkc = m_kdata->m_rkcn;
+	  for (int i = 0; i < m_ii; i++) {
+	    krev[i] *= m_rkc[i];
+	  }
+	}
+    }
+=======================================================================
+    /**
+     * Get the equilibrium constants of all reactions, whether
+     * reversible or not.
+     */
+    void GasKinetics::getEquilibriumConstants(doublereal* kc) {
+        int i;
+        _update_rates_T();
+        vector_fp& rkc = m_kdata->m_rkcn;
+        //thermo().getGibbs_RT(m_grt.begin());
+        thermo().getStandardChemPotentials(m_grt.begin());
+        fill(rkc.begin(), rkc.end(), 0.0);
+        
+        // compute Delta G^0 for all reactions
+        m_rxnstoich->getReactionDelta(m_ii, m_grt.begin(), rkc.begin());
+ 
+        doublereal logStandConc = m_kdata->m_logStandConc;
+        doublereal rrt = 1.0/(GasConstant * thermo().temperature());
+        for (i = 0; i < m_ii; i++) {
+            kc[i] = exp(-rkc[i]*rrt + m_dn[i]*logStandConc);
+        }
+    }
+=======================================================================
+in Kinetics.h
+	/**
+	 * This method returns a reference to the nth ThermoPhase
+	 * object defined in this kinetics mechanism.  It is typically
+	 * used so that member functions of the ThermoPhase object may
+	 * be called. For homogeneous mechanisms, there is only one
+	 * object, and this method can be called without an argument
+	 * to access it.
+	 */
+        thermo_t& thermo(int n=0) { return *m_thermo[n]; }
+        const thermo_t& thermo(int n=0) const { return *m_thermo[n]; }
+=======================================================================
+in Kinetics.h
+        // typedefs
+        typedef ThermoPhase thermo_t;
+=======================================================================
+in IdealGasPhase.cpp
+    class IdealGasPhase : public ThermoPhase  {
+
+    void IdealGasPhase::getStandardChemPotentials(doublereal* muStar) const {
+	const array_fp& gibbsrt = gibbs_RT_ref();
+	scale(gibbsrt.begin(), gibbsrt.end(), muStar, _RT());
+	double tmp = log (pressure() /m_spthermo->refPressure());
+	tmp *=  GasConstant * temperature();
+	for (int k = 0; k < m_kk; k++) {
+            muStar[k] += tmp;  // add RT*ln(P/P_0)
+	}
+    }
+    protected:
+
+        int m_kk, m_mm;
+        doublereal m_tmin, m_tmax, m_p0;
+
+        mutable doublereal     m_tlast, m_logc0;
+        mutable array_fp      m_h0_RT;
+        mutable array_fp      m_cp0_R;
+        mutable array_fp      m_g0_RT;
+        mutable array_fp      m_s0_R;
+        mutable array_fp      m_expg0_RT;
+        mutable array_fp      m_pe;
+        mutable array_fp      m_pp;
+=======================================================================
+in ThermoPhase.h
+    protected:
+
+        /// Pointer to the species thermodynamic property manager
+        SpeciesThermo* m_spthermo;
+
+
+        /**
+         * @internal Install a species thermodynamic property
+         * manager. The species thermodynamic property manager
+         * computes properties of the pure species for use in
+         * constructing solution properties. It is meant for internal
+         * use, and some classes derived from ThermoPhase may not use
+         * any species thermodynamic property manager. This method is
+         * called by function importPhase in importCTML.cpp.
+         */
+        void setSpeciesThermo(SpeciesThermo* spthermo) 
+            { m_spthermo = spthermo; }
+=======================================================================
+in SpeciesThermoFactory.cpp
+
+   SpeciesThermo* SpeciesThermoFactory::newSpeciesThermo(int type) {
+        
+        switch (type) {
+        case NASA:
+            return new NasaThermo;
+        case SHOMATE:
+            return new ShomateThermo;
+        case SIMPLE:
+            return new SimpleThermo;
+        case NASA + SHOMATE:
+            return new SpeciesThermoDuo<NasaThermo, ShomateThermo>;
+        case NASA + SIMPLE:
+            return new SpeciesThermoDuo<NasaThermo, SimpleThermo>;
+        case SHOMATE + SIMPLE:
+            return new SpeciesThermoDuo<ShomateThermo, SimpleThermo>;
+        default:
+            throw UnknownSpeciesThermo(
+                "SpeciesThermoFactory::newSpeciesThermo",type);
+            return 0; 
+        }
+    }
+=======================================================================
+in NasaThermo.h
+
+        /**
+         * Install parameterization for a species.
+         * @param index    Species index
+         * @param type     ignored, since only NASA type is supported
+         * @param c        coefficients. These are
+         * - c[0]          midpoint temperature
+         * - c[1] - c[7]   coefficients for low T range
+         * - c[8] - c[14]  coefficients for high T range
+         */
+        virtual void install(string name, int index, int type, 
+			     const doublereal* c, 
+			     doublereal minTemp, doublereal maxTemp,
+			     doublereal refPressure) { 
+
+            //writelog("installing NASA thermo for species "+name+"\n");
+            //writelog(" index = "+int2str(index)+"\n");
+            int imid = int(c[0]);       // midpoint temp converted to integer
+            int igrp = m_index[imid];   // has this value been seen before?
+            if (igrp == 0) {            // if not, prepare new group
+                vector<NasaPoly1> v;
+                m_high.push_back(v);
+                m_low.push_back(v);
+                m_tmid.push_back(c[0]);
+                m_index[imid] = igrp = static_cast<int>(m_high.size());
+                m_ngroups++;
+            }
+
+	    m_group_map[index] = igrp;
+	    m_posInGroup_map[index] = (int) m_low[igrp-1].size();
+	    
+            doublereal tlow  = minTemp;
+            doublereal tmid  = c[0];
+            doublereal thigh = maxTemp;
+            doublereal pref  = refPressure;
+            const doublereal* clow = c + 1;
+
+            vector_fp chigh(7);
+            copy(c + 8, c + 15, chigh.begin());
+
+            checkContinuity(name, tmid, clow, chigh.begin());
+
+            m_high[igrp-1].push_back(NasaPoly1(index, tmid, thigh, 
+                                         pref, chigh.begin()));
+            m_low[igrp-1].push_back(NasaPoly1(index, tlow, tmid, 
+                                        pref, clow));
+
+            if (tlow > m_tlow_max)    m_tlow_max = tlow;
+            if (thigh < m_thigh_min)  m_thigh_min = thigh;
+            m_tlow.push_back(tlow);
+            m_thigh.push_back(thigh);
+            m_p0 = pref;
+        }

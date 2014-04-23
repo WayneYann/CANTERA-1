@@ -1,0 +1,22 @@
+ObjectClasses:
+%%%-----------------------------------------------------------------------
+%%% SelectionTree
+%%%-----------------------------------------------------------------------
+DataType: AlgorithmRun An Algorithm Run
+BaseAlgorithmRun
+MechanismRoutines      Initial
+     ChemkinRoutines   Initial#MechanismRoutines
+          RunIgnition             Initial#MechanismRoutines#ChemkinRoutines    Run
+          PrintOutMechanism       Initial#MechanismRoutines#ChemkinRoutines    Print
+END
+END
+ClassNamePairs:
+ReadChemkinAlg           AlgorithmSummary
+RunIgnitionAlg           AlgorithmSummary
+RunSetOfConditionsAlg    AlgorithmSummary
+PrintMechanism           AlgorithmSummary
+END
+ObjectClasses:
+END
+ClassNamePairs:
+END

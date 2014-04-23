@@ -1,0 +1,54 @@
+ObjectClasses:
+%%% -----------------------------------------------
+DataType: ObjectIterator Standard Object Iterator
+StandardObjectIterator   
+Keys: ReadAsTriplet END
+%%% -----------------------------------------------
+DataType: IterationSet   The Run Ignition Iteration Set
+StandardIterationSet Instance
+%%% -----------------------------------------------
+DataType: SetOfObjects  The set of concentrations
+HeptaneAirMoleFractionsSetClass
+ObjectClasses:
+END
+ClassNamePairs:
+o2     Real
+n2     Real
+nc7h16 Real
+END
+%%% -----------------------------------------------
+DataType: SetOfObjects  The set of concentrations
+GRIMoleFractionsSetClass
+ObjectClasses:
+END
+ClassNamePairs:
+H2     Real
+O2     Real
+N2     Real
+END
+%%% -----------------------------------------------
+DataType: IgnitionConditions The set of ignition conditions
+StandardIgnitionRunConditions 
+LiteratureReference StandardUnitConversions
+StandardUnits:
+%% ------------------------
+END
+PropertyConversions:
+END
+HeptaneAirMoleFractionsSetClass Real Real Real Real
+%%% -------------------------------------------------
+END
+ClassNamePairs:
+Conditions           StandardIgnitionRunConditions
+IterationSet          StandardIterationSet  
+FileRoot             String   
+%%% Pressure             Real
+%%% Temperature          Real   
+ DeltaT               Real  
+ FinalTime            Real  
+ OutputName           String 
+END
+ObjectClasses:
+END
+ClassNamePairs:
+END

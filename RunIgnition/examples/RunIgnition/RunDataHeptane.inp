@@ -1,0 +1,75 @@
+SetOfData ================= Read Test ==========================
+Attributes:
+%%%%-----------------------------------------------------------------------------
+%%%%   RunSetOfConditionsAlg    AlgorithmSummary
+%%%%-----------------------------------------------------------------------------
+       Initial SetOfRuns  END    % Algorithm Category
+       ShowTimeSteps 
+%%%       FileSummary
+       ExtraOutput
+       Excel
+       MolFractions
+       ForwardRates
+       ReverseRates
+       NetProductionRates
+       TimeStepProperties
+       END                     % Algorithm KeyWords
+       RunSet Ignition END     % Algorithm Specification
+                                              % Algorithm Input Parameters
+                               % (Name-Class Pairs)
+       FileRoot             String   
+       Conditions           Real
+       FinalTime            Real
+       OutputName           String
+       IterationSet         IterationSet
+       END
+                                              % Algorithm Result Parameters
+       END
+%%%------------------------------------------
+%%%------------------------------------------
+Test ; Standard Hydrogen Mechanism ; Edward S. Blurock
+The Initial Conditions for a hydrogen/oxygen/nitrogen
+T: 1200.0
+%%% P: 10325.0
+P: 1342250.0
+d: 0.000001
+Species:
+%%% Heptane Stochiometric
+o2      .2080
+n2      .7825
+nc7h16  .0095 
+%%% GRI Standard Example
+%%% H2 2.0
+%%% O2 1.0
+%%% N2 4.0
+END
+%%%------------------------------------------
+%%% IterationSet StandardIterationSet  
+%%%------------------------------------------
+IterationSet:
+   Iterator: StandardObjectIterator Species
+     %%%% ---- Iterator StandardObjectIterator
+       HeptaneAirMoleFractionsSetClass C1
+          .2080 .7825 .0095 
+       END
+   Iterator: StandardObjectIterator Temperature
+     %%%% ---- Iterator StandardObjectIterator
+       Real T1 900.0
+       Real T3 1100.0
+       Real T3 1200.0
+    END
+   Iterator: StandardObjectIterator Pressure
+     %%%% ---- Iterator StandardObjectIterator
+       Real P1 1350000.0
+    END
+END 
+%%%------------------------------------------
+%%%------------------------------------------
+heptane
+%%% 10325.0
+%%% 800.0
+ 0.000001
+ 0.0200
+HiTempRunMatrix
+END
+RxnDataRunIgnition
